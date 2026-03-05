@@ -7,18 +7,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="links.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      /* Primary Palette */
       --eucalyptus: #3D5A4E;
       --cedar: #A67B5B;
       --bamboo: #8EAE7E;
       --linen: #F7F3EE;
       --cloud: #FEFDFB;
-
-      /* Secondary Palette */
       --still-water: #9CBCB4;
       --pebblestone: #D4C0A8;
       --timber-wash: #EDE4D8;
@@ -39,7 +37,6 @@
       padding: 48px 20px;
     }
 
-    /* Wave decoration */
     .wave-decoration {
       text-align: center;
       margin-bottom: 12px;
@@ -106,9 +103,7 @@
       box-shadow: 0 0 0 3px rgba(61, 90, 78, 0.1);
     }
 
-    input::placeholder {
-      color: var(--pebblestone);
-    }
+    input::placeholder { color: var(--pebblestone); }
 
     .slug-input-wrapper {
       display: flex;
@@ -175,9 +170,7 @@
       border-radius: 10px;
     }
 
-    .result.error {
-      border-color: var(--cedar);
-    }
+    .result.error { border-color: var(--cedar); }
 
     .result-url {
       display: flex;
@@ -208,9 +201,7 @@
       font-weight: 500;
     }
 
-    .btn-copy:hover {
-      background: var(--dark-timber);
-    }
+    .btn-copy:hover { background: var(--dark-timber); }
 
     .result .error-msg {
       color: #b5543e;
@@ -242,14 +233,9 @@
       transition: border-color 0.2s;
     }
 
-    .url-item:hover {
-      border-color: var(--pebblestone);
-    }
+    .url-item:hover { border-color: var(--pebblestone); }
 
-    .url-item-info {
-      flex: 1;
-      min-width: 0;
-    }
+    .url-item-info { flex: 1; min-width: 0; }
 
     .url-item-short {
       color: var(--eucalyptus);
@@ -279,16 +265,21 @@
       flex-shrink: 0;
     }
 
-    .clicks {
-      color: var(--warm-charcoal);
-      font-size: 0.82rem;
-      white-space: nowrap;
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 500;
     }
 
-    .clicks strong {
+    .badge-live {
+      background: var(--bamboo);
+      color: white;
+    }
+
+    .badge-local {
+      background: var(--timber-wash);
       color: var(--cedar);
-      font-size: 1.05rem;
-      font-weight: 700;
     }
 
     .btn-delete {
@@ -321,6 +312,28 @@
       background: var(--pebblestone);
       margin: 0 auto 40px;
       border-radius: 2px;
+    }
+
+    .hint-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--timber-wash);
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: var(--warm-charcoal);
+      line-height: 1.6;
+    }
+
+    .hint-box strong {
+      color: var(--eucalyptus);
+    }
+
+    .hint-box code {
+      background: var(--cloud);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-family: monospace;
     }
 
     @media (max-width: 600px) {
@@ -368,13 +381,52 @@
       <div id="url-list" class="url-list">
         <div class="empty-state">No links yet. Create your first one above.</div>
       </div>
+
+      <div class="hint-box">
+        <strong>Making links live:</strong> To make a redirect work publicly, add it to
+        <code>links.js</code> and push to GitHub. Links marked <span class="badge badge-live" style="display:inline">live</span>
+        are in links.js and redirect anyone. Links marked <span class="badge badge-local" style="display:inline">local</span>
+        are saved in your browser only.
+      </div>
     </div>
   </div>
 
   <script>
-    const baseUrl = window.location.origin + '/';
     const displayBase = 'CC.Float/';
-    document.getElementById('slug-prefix').textContent = displayBase;
+    const siteBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/, '/').replace(/\/+$/, '/');
+
+    // Merge published links (from links.js) + local links (from localStorage)
+    function getLocalLinks() {
+      try { return JSON.parse(localStorage.getItem('ccf_links') || '{}'); }
+      catch { return {}; }
+    }
+
+    function saveLocalLinks(links) {
+      localStorage.setItem('ccf_links', JSON.stringify(links));
+    }
+
+    function getAllLinks() {
+      const local = getLocalLinks();
+      const all = {};
+      // Published links first
+      for (const [slug, url] of Object.entries(LINKS)) {
+        all[slug] = { url, source: 'live' };
+      }
+      // Local links (don't overwrite published)
+      for (const [slug, url] of Object.entries(local)) {
+        if (!all[slug]) {
+          all[slug] = { url, source: 'local' };
+        }
+      }
+      return all;
+    }
+
+    function generateSlug() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let slug = '';
+      for (let i = 0; i < 7; i++) slug += chars[Math.floor(Math.random() * chars.length)];
+      return slug;
+    }
 
     const form = document.getElementById('shorten-form');
     const result = document.getElementById('result');
@@ -383,84 +435,84 @@
     const resultLink = document.getElementById('result-link');
     const submitBtn = document.getElementById('submit-btn');
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Creating...';
+      let url = document.getElementById('url').value.trim();
+      let slug = document.getElementById('slug').value.trim().toLowerCase().replace(/[^a-z0-9\-_]/g, '');
 
-      const url = document.getElementById('url').value.trim();
-      const slug = document.getElementById('slug').value.trim();
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
-      try {
-        const res = await fetch('/api/shorten', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, slug: slug || undefined })
-        });
-        const data = await res.json();
-
-        result.style.display = 'block';
-
-        if (res.ok) {
-          result.classList.remove('error');
-          resultSuccess.style.display = 'flex';
-          resultError.style.display = 'none';
-          const shortUrl = baseUrl + data.entry.slug;
-          resultLink.href = shortUrl;
-          resultLink.textContent = displayBase + data.entry.slug;
-          form.reset();
-          loadUrls();
-        } else {
-          result.classList.add('error');
-          resultSuccess.style.display = 'none';
-          resultError.style.display = 'block';
-          resultError.textContent = data.error;
-        }
-      } catch (err) {
-        result.style.display = 'block';
-        result.classList.add('error');
-        resultSuccess.style.display = 'none';
-        resultError.style.display = 'block';
-        resultError.textContent = 'Something went wrong. Try again.';
+      try { new URL(url); } catch {
+        showError('Invalid URL');
+        return;
       }
 
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Create Link';
+      if (!slug) slug = generateSlug();
+      if (slug.length > 50) { showError('Slug too long (max 50 chars)'); return; }
+
+      const all = getAllLinks();
+      if (all[slug]) { showError('That custom link is already taken'); return; }
+
+      // Save to localStorage
+      const local = getLocalLinks();
+      local[slug] = url;
+      saveLocalLinks(local);
+
+      // Show success
+      result.style.display = 'block';
+      result.classList.remove('error');
+      resultSuccess.style.display = 'flex';
+      resultError.style.display = 'none';
+      resultLink.href = siteBase + slug;
+      resultLink.textContent = displayBase + slug;
+      form.reset();
+      loadUrls();
     });
 
+    function showError(msg) {
+      result.style.display = 'block';
+      result.classList.add('error');
+      resultSuccess.style.display = 'none';
+      resultError.style.display = 'block';
+      resultError.textContent = msg;
+    }
+
     function copyLink() {
-      navigator.clipboard.writeText(resultLink.href);
+      navigator.clipboard.writeText(resultLink.textContent);
       const btn = document.querySelector('.btn-copy');
       btn.textContent = 'Copied!';
       setTimeout(() => btn.textContent = 'Copy', 1500);
     }
 
-    async function loadUrls() {
-      const res = await fetch('/api/urls');
-      const urls = await res.json();
+    function loadUrls() {
+      const all = getAllLinks();
       const list = document.getElementById('url-list');
+      const entries = Object.entries(all);
 
-      if (urls.length === 0) {
+      if (entries.length === 0) {
         list.innerHTML = '<div class="empty-state">No links yet. Create your first one above.</div>';
         return;
       }
 
-      list.innerHTML = urls.map(u => `
+      list.innerHTML = entries.map(([slug, data]) => `
         <div class="url-item">
           <div class="url-item-info">
-            <a class="url-item-short" href="${baseUrl}${u.slug}" target="_blank">${displayBase}${u.slug}</a>
-            <div class="url-item-original">${u.original_url}</div>
+            <a class="url-item-short" href="${siteBase}${slug}" target="_blank">${displayBase}${slug}</a>
+            <div class="url-item-original">${data.url}</div>
           </div>
           <div class="url-item-stats">
-            <span class="clicks"><strong>${u.clicks}</strong> clicks</span>
-            <button class="btn-delete" onclick="deleteUrl('${u.slug}')">Delete</button>
+            <span class="badge ${data.source === 'live' ? 'badge-live' : 'badge-local'}">${data.source}</span>
+            ${data.source === 'local' ? `<button class="btn-delete" onclick="deleteUrl('${slug}')">Delete</button>` : ''}
           </div>
         </div>
       `).join('');
     }
 
-    async function deleteUrl(slug) {
-      await fetch('/api/urls/' + slug, { method: 'DELETE' });
+    function deleteUrl(slug) {
+      const local = getLocalLinks();
+      delete local[slug];
+      saveLocalLinks(local);
       loadUrls();
     }
 
