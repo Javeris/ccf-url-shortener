@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CC.Float Links</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="links.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --eucalyptus: #3D5A4E;
+      --cedar: #A67B5B;
+      --bamboo: #8EAE7E;
+      --linen: #F7F3EE;
+      --cloud: #FEFDFB;
+      --still-water: #9CBCB4;
+      --pebblestone: #D4C0A8;
+      --timber-wash: #EDE4D8;
+      --warm-charcoal: #3D3530;
+      --dark-timber: #2B2420;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--cloud);
+      color: var(--warm-charcoal);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 20px;
+    }
+
+    .wave-decoration {
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--still-water);
+      font-size: 1.5rem;
+      letter-spacing: 0.3em;
+    }
+
+    h1 {
+      font-family: 'Lora', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--eucalyptus);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--cedar);
+      margin-bottom: 44px;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+    }
+
+    .card {
+      background: var(--linen);
+      border-radius: 14px;
+      padding: 32px;
+      margin-bottom: 28px;
+      border: 1px solid var(--timber-wash);
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--cedar);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--pebblestone);
+      border-radius: 10px;
+      background: var(--cloud);
+      color: var(--dark-timber);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--eucalyptus);
+      box-shadow: 0 0 0 3px rgba(61, 90, 78, 0.1);
+    }
+
+    input::placeholder { color: var(--pebblestone); }
+
+    .slug-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .slug-prefix {
+      padding: 14px 14px;
+      background: var(--eucalyptus);
+      border: 1.5px solid var(--eucalyptus);
+      border-right: none;
+      border-radius: 10px 0 0 10px;
+      color: var(--linen);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    .slug-input-wrapper input {
+      border-radius: 0 10px 10px 0;
+      border-left: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--eucalyptus);
+      color: var(--linen);
+      letter-spacing: 0.03em;
+    }
+
+    .btn-primary:hover {
+      background: var(--dark-timber);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(43, 36, 32, 0.15);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .result {
+      display: none;
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--cloud);
+      border: 2px solid var(--bamboo);
+      border-radius: 10px;
+    }
+
+    .result.error { border-color: var(--cedar); }
+
+    .result-url {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result-url a {
+      color: var(--eucalyptus);
+      text-decoration: none;
+      font-weight: 600;
+      flex: 1;
+      word-break: break-all;
+    }
+
+    .result-url a:hover {
+      color: var(--dark-timber);
+      text-decoration: underline;
+    }
+
+    .btn-copy {
+      padding: 8px 18px;
+      background: var(--eucalyptus);
+      color: var(--linen);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      width: auto;
+      font-weight: 500;
+    }
+
+    .btn-copy:hover { background: var(--dark-timber); }
+
+    .result .error-msg {
+      color: #b5543e;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--dark-timber);
+    }
+
+    .url-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .url-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: var(--cloud);
+      border-radius: 10px;
+      border: 1px solid var(--timber-wash);
+      transition: border-color 0.2s;
+    }
+
+    .url-item:hover { border-color: var(--pebblestone); }
+
+    .url-item-info { flex: 1; min-width: 0; }
+
+    .url-item-short {
+      color: var(--eucalyptus);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .url-item-short:hover {
+      color: var(--dark-timber);
+      text-decoration: underline;
+    }
+
+    .url-item-original {
+      color: var(--pebblestone);
+      font-size: 0.82rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-top: 3px;
+    }
+
+    .url-item-stats {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .badge-live {
+      background: var(--bamboo);
+      color: white;
+    }
+
+    .badge-local {
+      background: var(--timber-wash);
+      color: var(--cedar);
+    }
+
+    .btn-delete {
+      padding: 7px 14px;
+      background: transparent;
+      color: var(--pebblestone);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      width: auto;
+      border: 1px solid var(--timber-wash);
+    }
+
+    .btn-delete:hover {
+      background: #b5543e;
+      border-color: #b5543e;
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--pebblestone);
+      padding: 36px;
+      font-size: 0.95rem;
+      font-style: italic;
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: var(--pebblestone);
+      margin: 0 auto 40px;
+      border-radius: 2px;
+    }
+
+    .hint-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--timber-wash);
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: var(--warm-charcoal);
+      line-height: 1.6;
+    }
+
+    .hint-box strong {
+      color: var(--eucalyptus);
+    }
+
+    .hint-box code {
+      background: var(--cloud);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-family: monospace;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .card { padding: 22px; }
+      .url-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .url-item-stats { width: 100%; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="wave-decoration">~ ~ ~</div>
+    <h1>Link Shortener</h1>
+    <p class="subtitle">Create custom short links for Central Coast Float</p>
+    <div class="divider"></div>
+
+    <div class="card">
+      <form id="shorten-form">
+        <div class="form-group">
+          <label for="url">Destination URL</label>
+          <input type="text" id="url" placeholder="https://example.com/your-long-url" required>
+        </div>
+        <div class="form-group">
+          <label for="slug">Custom Short Link <span style="font-weight:400;text-transform:none">(optional)</span></label>
+          <div class="slug-input-wrapper">
+            <span class="slug-prefix" id="slug-prefix">CC.Float/</span>
+            <input type="text" id="slug" placeholder="my-custom-link">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary" id="submit-btn">Create Link</button>
+      </form>
+
+      <div class="result" id="result">
+        <div class="result-url" id="result-success" style="display:none">
+          <a id="result-link" href="#" target="_blank"></a>
+          <button class="btn-copy" onclick="copyLink()">Copy</button>
+        </div>
+        <div class="error-msg" id="result-error" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Your Links</h2>
+      <div id="url-list" class="url-list">
+        <div class="empty-state">No links yet. Create your first one above.</div>
+      </div>
+
+      <div class="hint-box">
+        <strong>Making links live:</strong> To make a redirect work publicly, add it to
+        <code>links.js</code> and push to GitHub. Links marked <span class="badge badge-live" style="display:inline">live</span>
+        are in links.js and redirect anyone. Links marked <span class="badge badge-local" style="display:inline">local</span>
+        are saved in your browser only.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const displayBase = 'CC.Float/';
+    const siteBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/, '/').replace(/\/+$/, '/');
+
+    // Merge published links (from links.js) + local links (from localStorage)
+    function getLocalLinks() {
+      try { return JSON.parse(localStorage.getItem('ccf_links') || '{}'); }
+      catch { return {}; }
+    }
+
+    function saveLocalLinks(links) {
+      localStorage.setItem('ccf_links', JSON.stringify(links));
+    }
+
+    function getAllLinks() {
+      const local = getLocalLinks();
+      const all = {};
+      // Published links first
+      for (const [slug, url] of Object.entries(LINKS)) {
+        all[slug] = { url, source: 'live' };
+      }
+      // Local links (don't overwrite published)
+      for (const [slug, url] of Object.entries(local)) {
+        if (!all[slug]) {
+          all[slug] = { url, source: 'local' };
+        }
+      }
+      return all;
+    }
+
+    function generateSlug() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let slug = '';
+      for (let i = 0; i < 7; i++) slug += chars[Math.floor(Math.random() * chars.length)];
+      return slug;
+    }
+
+    const form = document.getElementById('shorten-form');
+    const result = document.getElementById('result');
+    const resultSuccess = document.getElementById('result-success');
+    const resultError = document.getElementById('result-error');
+    const resultLink = document.getElementById('result-link');
+    const submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let url = document.getElementById('url').value.trim();
+      let slug = document.getElementById('slug').value.trim().toLowerCase().replace(/[^a-z0-9\-_]/g, '');
+
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+      try { new URL(url); } catch {
+        showError('Invalid URL');
+        return;
+      }
+
+      if (!slug) slug = generateSlug();
+      if (slug.length > 50) { showError('Slug too long (max 50 chars)'); return; }
+
+      const all = getAllLinks();
+      if (all[slug]) { showError('That custom link is already taken'); return; }
+
+      // Save to localStorage
+      const local = getLocalLinks();
+      local[slug] = url;
+      saveLocalLinks(local);
+
+      // Show success
+      result.style.display = 'block';
+      result.classList.remove('error');
+      resultSuccess.style.display = 'flex';
+      resultError.style.display = 'none';
+      resultLink.href = siteBase + slug;
+      resultLink.textContent = displayBase + slug;
+      form.reset();
+      loadUrls();
+    });
+
+    function showError(msg) {
+      result.style.display = 'block';
+      result.classList.add('error');
+      resultSuccess.style.display = 'none';
+      resultError.style.display = 'block';
+      resultError.textContent = msg;
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText(resultLink.textContent);
+      const btn = document.querySelector('.btn-copy');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    }
+
+    function loadUrls() {
+      const all = getAllLinks();
+      const list = document.getElementById('url-list');
+      const entries = Object.entries(all);
+
+      if (entries.length === 0) {
+        list.innerHTML = '<div class="empty-state">No links yet. Create your first one above.</div>';
+        return;
+      }
+
+      list.innerHTML = entries.map(([slug, data]) => `
+        <div class="url-item">
+          <div class="url-item-info">
+            <a class="url-item-short" href="${siteBase}${slug}" target="_blank">${displayBase}${slug}</a>
+            <div class="url-item-original">${data.url}</div>
+          </div>
+          <div class="url-item-stats">
+            <span class="badge ${data.source === 'live' ? 'badge-live' : 'badge-local'}">${data.source}</span>
+            ${data.source === 'local' ? `<button class="btn-delete" onclick="deleteUrl('${slug}')">Delete</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteUrl(slug) {
+      const local = getLocalLinks();
+      delete local[slug];
+      saveLocalLinks(local);
+      loadUrls();
+    }
+
+    loadUrls();
+  </script>
+</body>
+</html>

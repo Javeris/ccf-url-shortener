@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CC.Float - Redirecting...</title>
+  <script src="links.js"></script>
+  <script>
+    (function() {
+      // Get the slug from the URL path
+      // Handles both root deploy and /repo-name/ deploy
+      var path = window.location.pathname;
+      // Strip trailing slash
+      path = path.replace(/\/$/, '');
+      // Get the last segment as the slug
+      var parts = path.split('/');
+      var slug = parts[parts.length - 1];
+
+      if (slug && LINKS[slug]) {
+        window.location.replace(LINKS[slug]);
+      }
+      // If no match, the page below will show
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #FEFDFB;
+      color: #3D3530;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .not-found {
+      max-width: 440px;
+    }
+    .wave {
+      color: #9CBCB4;
+      font-size: 1.5rem;
+      letter-spacing: 0.3em;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: 'Lora', serif;
+      color: #3D5A4E;
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    p {
+      color: #A67B5B;
+      font-size: 1rem;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    a {
+      display: inline-block;
+      padding: 12px 28px;
+      background: #3D5A4E;
+      color: #F7F3EE;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    a:hover { background: #2B2420; }
+  </style>
+</head>
+<body>
+  <div class="not-found">
+    <div class="wave">~ ~ ~</div>
+    <h1>Link not found</h1>
+    <p>This short link doesn't exist yet. It may have been removed or mistyped.</p>
+    <a href="./">Back to Link Shortener</a>
+  </div>
+</body>
+</html>
